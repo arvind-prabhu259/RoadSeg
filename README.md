@@ -9,6 +9,13 @@ Training loss for the first 20 epochs of training
 ![image](https://github.com/arvind-prabhu259/RoadSeg/assets/94371314/2423bb05-2fdf-462f-b1e8-8e42693de2da)
 
 (U-Net architecture)
+## Training and Validation:
+
+Due to limitations in GPU access, I first trained the model and saved it after every epoch. To perform validation, I loaded the saved model at each epoch at performed validation. The results are as plotted.
+
+### Loss function:
+
+Loss functions are used to provide a measure of how "wrong" a model's prediction is. Here, I used a combination of two different loss functions: Dice Loss and Cross Entropy Loss. Dice Loss is a type of Intersection over Union (IOU) loss function. It encourages the model to create more accurate segmentation masks, i.e., segmentation masks that more closely follow the shapes of objects in the image. Cross Entropy Loss, on the other hand, encourages the model to make more accurate predictions (more correct identification). Using a combinationn of these 2 loss functions, I have trained the model to create both accurate and well-defined seegmentation masks for dashcam footage.
 
 ## Results:
 After training for 20 epochs:
