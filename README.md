@@ -23,5 +23,8 @@ After training for 20 epochs:
 
 ![image](https://github.com/arvind-prabhu259/RoadSeg/assets/94371314/615af034-6501-4a04-96aa-d2a2b4f8f9ad)
 
+![image](https://github.com/arvind-prabhu259/RoadSeg/assets/94371314/621b9a0d-6af6-42b1-bbce-1ab4d272d7f6)
+
+
 
 We can see that the model is capable of distinguishing roughly between the sky and the ground. However, it struggles with identifying different types of objects(Trees, cars, etc).
