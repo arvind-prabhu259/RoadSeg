@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en"> 
+    <head>
+        <title>RoadSeg: Dashcam footage segmentation</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href = "{{url_for('static', filename='css/index_styles.css')}}">
+    </head>
+    <body>
+        <h1>Input image</h1>
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <input type="submit" value="upload">
+        </form>
+        {% if message %}
+        <h1>{{message}}</h1>
+        {% endif %}
+    </body>
+</html>
