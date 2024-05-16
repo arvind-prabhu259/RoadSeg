@@ -6,23 +6,16 @@ import os
 import cv2
 from SegmentationModel.SegModel import load_model
 import numpy as np
-from celery import Celery
-# from celery_worker import celery
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads/'
 OUTPUT_FOLDER = 'output/'
-
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 
-# Celery configuration
-
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
+# UPLOAD_FOLDER = 'output/'
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 os.chdir("C:\\Users\\arvin\\MLProjectsFolder\\RoadSeg\\FlaskApp")
@@ -30,7 +23,6 @@ model = load_model('Unet_Model_Epoch_199.pth')
 
 clahe = cv2.createCLAHE(clipLimit=40)
 
-@celery.task
 def process_image(input_file_path, output_file_path):
     image = cv2.imread(input_file_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -84,8 +76,8 @@ def send_image(filename):
     return send_from_directory(app.config['OUTPUT_FOLDER'], filename)
 
 if __name__ == '__main__':
-    celery.start()
     app.run()
+
 
 # @app.route('/output/<filename>')
 # def output_image(filename):
