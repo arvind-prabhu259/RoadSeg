@@ -6,8 +6,10 @@ import os
 import cv2
 from SegmentationModel.SegModel import load_model
 import numpy as np
+import asyncio
 
 app = Flask(__name__)
+
 UPLOAD_FOLDER = 'uploads/'
 OUTPUT_FOLDER = 'output/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -23,18 +25,19 @@ model = load_model('Unet_Model_Epoch_199.pth')
 
 clahe = cv2.createCLAHE(clipLimit=40)
 
-def process_image(input_file_path, output_file_path):
+async def process_image(input_file_path, output_file_path):
+    print(input_file_path, output_file_path)
     image = cv2.imread(input_file_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = image.resize((720, 960))
 
-    clahe_img = clahe.apply(image)
+    clahe_img = await clahe.apply(image)
     torch_img = torch.from_numpy(clahe_img).float()
 
-    mask_preds = model(torch_img)
-    mask_preds = mask_preds.permute((1,2,0)).numpy()
+    mask_preds = await model(torch_img)
+    mask_preds = await mask_preds.permute((1,2,0)).numpy()
 
-    mask_pred = np.argmax(mask_preds, axis=2)
+    mask_pred = await np.argmax(mask_preds, axis=2)
     mask_pred.save(output_file_path)
 
 
@@ -47,7 +50,7 @@ def return_home():
     return render_template('index.html', message = None)
 
 @app.route('/upload', methods = ['POST'])
-def upload():
+async def upload():
     if(request.method == 'POST'):
         file = request.files['file']
         if file:
@@ -60,7 +63,8 @@ def upload():
             processed_file_name = "processed_"+filename
             input_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             output_path = os.path.join(app.config['OUTPUT_FOLDER'], processed_file_name)
-            process_image(input_path, output_path)
+            print(input_path, output_path)
+            await process_image(input_path, output_path)
 
             return redirect(url_for('uploaded_file', filename = processed_file_name))
             
@@ -76,7 +80,7 @@ def send_image(filename):
     return send_from_directory(app.config['OUTPUT_FOLDER'], filename)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
 
 # @app.route('/output/<filename>')
