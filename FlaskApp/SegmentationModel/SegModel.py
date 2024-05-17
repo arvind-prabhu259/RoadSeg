@@ -138,5 +138,6 @@ class SegModel_UNet(nn.Module):
     
 def load_model(path_to_model):
     model = SegModel_UNet(in_channels = 1, out_channels = 32)
-    model.eval()
+    model.load_state_dict(torch.load(path_to_model, map_location=torch.device('cpu')))
+    # model.eval()
     return model

@@ -7,6 +7,7 @@ import cv2
 from SegmentationModel.SegModel import load_model
 import numpy as np
 import asyncio
+from process_img import process_image
 
 app = Flask(__name__)
 
@@ -24,22 +25,6 @@ os.chdir("C:\\Users\\arvin\\MLProjectsFolder\\RoadSeg\\FlaskApp")
 model = load_model('Unet_Model_Epoch_199.pth')
 
 clahe = cv2.createCLAHE(clipLimit=40)
-
-async def process_image(input_file_path, output_file_path):
-    print(input_file_path, output_file_path)
-    image = cv2.imread(input_file_path)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    image = image.resize((720, 960))
-
-    clahe_img = await clahe.apply(image)
-    torch_img = torch.from_numpy(clahe_img).float()
-
-    mask_preds = await model(torch_img)
-    mask_preds = await mask_preds.permute((1,2,0)).numpy()
-
-    mask_pred = await np.argmax(mask_preds, axis=2)
-    mask_pred.save(output_file_path)
-
 
 @app.route('/')
 def home():
@@ -72,7 +57,9 @@ async def upload():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return render_template('upload.html', filename = filename)
+    print(filename)
+    return send_from_directory(app.config['OUTPUT_FOLDER'], filename)
+    # return render_template('upload.html', filename = filename)
 
 @app.route('/output/<filename>')
 def send_image(filename):
