@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en"> 
+    <head>
+        <title>RoadSeg: Dashcam footage segmentation</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href = "{{url_for('static', filename='css/index_styles.css')}}">
+    </head>
+    <body>
+        <a href="{{url_for('return_home')}}">Return to home page</a>
+        {% if filename %}
+        <div class="result">
+            <h2>Result Image</h2>
+            <!-- <img src="output/{{filename}}" alt="Output Image"> -->
+            <h1>{{filename}}</h1>
+            <img src="{{ url_for('send_image', filename='../output/' + filename) }}" alt="Output Image">
+        </div>
+        {% endif %}
+    </body>
+</html>
